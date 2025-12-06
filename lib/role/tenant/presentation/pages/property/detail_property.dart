@@ -23,7 +23,10 @@ class DetailProperty extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ImageTile(images: property.images),
-              AccessoriseWidget(attributes: property.attributes),
+              AccessoriseWidget(
+                attributes: property.attributes,
+                amenities: property.amenities,
+              ),
               const SizedBox(height: 16),
               Text(
                 property.title,
