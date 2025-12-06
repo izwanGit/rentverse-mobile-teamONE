@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/banner/cubit.dart';
 import '../cubit/banner/state.dart';
 
-/// Stateless carousel powered by BannerCubit.
 class CarouselCustom extends StatelessWidget {
   const CarouselCustom({super.key});
 
@@ -17,27 +16,27 @@ class CarouselCustom extends StatelessWidget {
         builder: (context, state) {
           final cubit = context.read<BannerCubit>();
           return Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
               CarouselSlider.builder(
                 itemCount: state.images.length,
                 itemBuilder: (context, index, realIndex) {
                   final imagePath = state.images[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        imagePath,
-                        fit: BoxFit.fitWidth,
-                        width: double.infinity,
-                      ),
+
+                  // Widget Gambar
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Image.asset(imagePath, fit: BoxFit.cover),
                     ),
                   );
                 },
                 options: CarouselOptions(
-                  viewportFraction: 0.9,
-                  enlargeCenterPage: true,
+                  aspectRatio: 30 / 12,
+
+                  viewportFraction: 1,
+                  enlargeCenterPage: false,
+
                   autoPlay: true,
                   autoPlayInterval: const Duration(seconds: 4),
                   onPageChanged: (index, reason) {

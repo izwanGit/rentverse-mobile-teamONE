@@ -110,22 +110,25 @@ class TenantHomePage extends StatelessWidget {
               },
             ),
           ),
-          body: const Padding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CarouselCustom(),
-                SizedBox(height: 0),
-                SearchAndSortWidget(),
-                SizedBox(height: 6),
-                CityCarousel(),
-                SizedBox(height: 6),
-                Text(
-                  'Tenant Home Page',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-              ],
+          body: SingleChildScrollView(
+            child: const Padding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 8),
+                  CarouselCustom(),
+                  SizedBox(height: 8),
+                  SearchAndSortWidget(),
+                  SizedBox(height: 18),
+                  CityCarousel(),
+                  SizedBox(height: 6),
+                  Text(
+                    'Tenant Home Page',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

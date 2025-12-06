@@ -17,14 +17,14 @@ class CityCarousel extends StatelessWidget {
         builder: (context, state) {
           if (state.isLoading) {
             return const SizedBox(
-              height: 170,
+              height: 150,
               child: Center(child: CircularProgressIndicator()),
             );
           }
 
           if (state.error != null) {
             return SizedBox(
-              height: 170,
+              height: 150,
               child: Center(
                 child: Text(
                   'Failed to load cities',
@@ -35,7 +35,7 @@ class CityCarousel extends StatelessWidget {
           }
 
           if (state.cities.isEmpty) {
-            return const SizedBox(height: 170);
+            return const SizedBox(height: 150);
           }
 
           return CarouselSlider.builder(
@@ -45,9 +45,11 @@ class CityCarousel extends StatelessWidget {
               return _CityCard(city: city);
             },
             options: CarouselOptions(
-              height: 170,
-              viewportFraction: 0.7,
-              enableInfiniteScroll: false,
+              height: 150,
+              viewportFraction: 0.88,
+              enableInfiniteScroll: true,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 4),
               enlargeCenterPage: true,
               onPageChanged: (index, reason) {
                 context.read<CityCubit>().setIndex(index);
