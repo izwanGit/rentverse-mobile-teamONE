@@ -189,15 +189,19 @@ class PropertyModel {
 
 class PropertyImageModel {
   final String url;
+  final bool isPrimary;
 
-  PropertyImageModel({required this.url});
+  PropertyImageModel({required this.url, required this.isPrimary});
 
   factory PropertyImageModel.fromJson(Map<String, dynamic> json) {
-    return PropertyImageModel(url: json['url'] as String? ?? '');
+    return PropertyImageModel(
+      url: json['url'] as String? ?? '',
+      isPrimary: json['isPrimary'] as bool? ?? false,
+    );
   }
 
   PropertyImageEntity toEntity() {
-    return PropertyImageEntity(url: url);
+    return PropertyImageEntity(url: url, isPrimary: isPrimary);
   }
 }
 

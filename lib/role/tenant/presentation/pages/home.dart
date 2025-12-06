@@ -60,7 +60,7 @@ class TenantHomePage extends StatelessWidget {
                       SizedBox(height: 12),
                       CityCarousel(),
                       SizedBox(height: 12),
-                      ListPropertyWidget(),
+                      ListPropertyWidget(limitToThree: true),
                       SizedBox(height: 12),
                     ],
                   ),

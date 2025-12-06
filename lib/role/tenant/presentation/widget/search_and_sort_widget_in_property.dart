@@ -1,138 +1,114 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rentverse/role/tenant/presentation/cubit/search_and_sort/cubit.dart';
-import 'package:rentverse/role/tenant/presentation/cubit/search_and_sort/state.dart';
+import 'package:rentverse/common/colors/custom_color.dart';
+import 'package:rentverse/role/tenant/presentation/cubit/search_and_sort_for_property.dart/cubit.dart';
+import 'package:rentverse/role/tenant/presentation/cubit/search_and_sort_for_property.dart/state.dart';
 
-class SearchAndSortWidgetForProperty extends StatefulWidget {
-  final List<String> categories;
-  final void Function(String query, String category)? onChanged;
-
+class SearchAndSortWidgetForProperty extends StatelessWidget {
   const SearchAndSortWidgetForProperty({
     super.key,
     this.categories = const ['All', 'House', 'Apartment', 'Townhouse'],
     this.onChanged,
   });
 
-  @override
-  State<SearchAndSortWidgetForProperty> createState() =>
-      _SearchAndSortWidgetForPropertyState();
-}
-
-class _SearchAndSortWidgetForPropertyState
-    extends State<SearchAndSortWidgetForProperty> {
-  bool showFilter = false;
-  int selectedBedroom = 0; // 0 = any
-  double sizeValue = 500;
-  double priceValue = 5000000;
-  final Set<String> selectedFeatures = {};
+  final List<String> categories;
+  final void Function(String query, String category)? onChanged;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SearchAndSortCubit(),
-      child: BlocBuilder<SearchAndSortCubit, SearchAndSortState>(
-        builder: (context, state) {
-          final cubit = context.read<SearchAndSortCubit>();
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
+      create: (_) => SearchAndSortForPropertyCubit(),
+      child:
+          BlocBuilder<
+            SearchAndSortForPropertyCubit,
+            SearchAndSortForPropertyState
+          >(
+            builder: (context, state) {
+              final cubit = context.read<SearchAndSortForPropertyCubit>();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: _SearchField(
-                      initialValue: state.query,
-                      onChanged: (q) {
-                        cubit.updateQuery(q);
-                        widget.onChanged?.call(q, state.selectedType);
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: () => setState(() => showFilter = !showFilter),
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF00C2FF), Color(0xFF00E0C3)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _SearchField(
+                          initialValue: state.query,
+                          onChanged: (q) {
+                            cubit.updateQuery(q);
+                            onChanged?.call(q, state.selectedType);
+                          },
                         ),
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 6,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(Icons.tune, color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (final c in widget.categories) ...[
-                      _FilterChipItem(
-                        label: c,
-                        selected: state.selectedType == c,
-                        onTap: () {
-                          cubit.selectType(c);
-                          widget.onChanged?.call(state.query, c);
-                        },
                       ),
                       const SizedBox(width: 8),
-                    ],
-                  ],
-                ),
-              ),
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 250),
-                child: showFilter
-                    ? Padding(
-                        key: const ValueKey('filters'),
-                        padding: const EdgeInsets.only(top: 14),
-                        child: _FilterSheet(
-                          selectedBedroom: selectedBedroom,
-                          onBedroomSelected: (v) =>
-                              setState(() => selectedBedroom = v),
-                          sizeValue: sizeValue,
-                          onSizeChanged: (v) => setState(() => sizeValue = v),
-                          priceValue: priceValue,
-                          onPriceChanged: (v) => setState(() => priceValue = v),
-                          selectedFeatures: selectedFeatures,
-                          onToggleFeature: (f) {
-                            setState(() {
-                              if (selectedFeatures.contains(f)) {
-                                selectedFeatures.remove(f);
-                              } else {
-                                selectedFeatures.add(f);
-                              }
-                            });
-                          },
-                          onReset: () {
-                            setState(() {
-                              selectedBedroom = 0;
-                              sizeValue = 500;
-                              priceValue = 5000000;
-                              selectedFeatures.clear();
-                            });
-                          },
+                      GestureDetector(
+                        onTap: cubit.toggleFilter,
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF00C2FF), Color(0xFF00E0C3)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 6,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(Icons.tune, color: Colors.white),
                         ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
-            ],
-          );
-        },
-      ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        for (final c in categories) ...[
+                          _FilterChipItem(
+                            label: c,
+                            selected: state.selectedType == c,
+                            onTap: () {
+                              cubit.selectType(c);
+                              onChanged?.call(state.query, c);
+                            },
+                          ),
+                          const SizedBox(width: 8),
+                        ],
+                      ],
+                    ),
+                  ),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 250),
+                    child: state.showFilter
+                        ? Padding(
+                            key: const ValueKey('filters'),
+                            padding: const EdgeInsets.only(top: 14),
+                            child: _FilterSheet(
+                              selectedBedroom: state.selectedBedroom,
+                              onBedroomSelected: cubit.setBedroom,
+                              sizeValue: state.sizeValue,
+                              onSizeChanged: cubit.setSize,
+                              priceValue: state.priceValue,
+                              onPriceChanged: cubit.setPrice,
+                              selectedFeatures: state.selectedFeatures,
+                              onToggleFeature: cubit.toggleFeature,
+                              onReset: cubit.resetFilters,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              );
+            },
+          ),
     );
   }
 }
@@ -157,7 +133,7 @@ class _SearchField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          const Icon(Icons.search, color: Colors.teal, size: 22),
+          const _GradientIcon(Icons.search, size: 22),
           const SizedBox(width: 10),
           Expanded(
             child: TextField(
@@ -230,7 +206,7 @@ class _FilterSheet extends StatelessWidget {
             ),
             child: Row(
               children: const [
-                Icon(Icons.location_on, color: Colors.teal, size: 18),
+                _GradientIcon(Icons.location_on, size: 18),
                 SizedBox(width: 8),
                 Text(
                   'Kuala Lumpur, Malaysia',
@@ -259,14 +235,22 @@ class _FilterSheet extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
-          Slider(
-            value: sizeValue,
-            min: 200,
-            max: 2000,
-            divisions: 18,
-            activeColor: Colors.teal,
-            label: '${sizeValue.toStringAsFixed(0)} sqft',
-            onChanged: onSizeChanged,
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              trackShape: const _GradientSliderTrackShape(),
+              activeTrackColor: Colors.transparent,
+              inactiveTrackColor: Colors.grey.shade300,
+              thumbColor: appPrimaryColor,
+              overlayColor: appPrimaryColor.withOpacity(0.12),
+            ),
+            child: Slider(
+              value: sizeValue,
+              min: 200,
+              max: 2000,
+              divisions: 18,
+              label: '${sizeValue.toStringAsFixed(0)} sqft',
+              onChanged: onSizeChanged,
+            ),
           ),
           const SizedBox(height: 6),
           const Text(
@@ -274,14 +258,22 @@ class _FilterSheet extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
-          Slider(
-            value: priceValue,
-            min: 1000000,
-            max: 20000000,
-            divisions: 19,
-            activeColor: Colors.teal,
-            label: 'Rp ${priceValue.toStringAsFixed(0)}',
-            onChanged: onPriceChanged,
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              trackShape: const _GradientSliderTrackShape(),
+              activeTrackColor: Colors.transparent,
+              inactiveTrackColor: Colors.grey.shade300,
+              thumbColor: appPrimaryColor,
+              overlayColor: appPrimaryColor.withOpacity(0.12),
+            ),
+            child: Slider(
+              value: priceValue,
+              min: 1000000,
+              max: 20000000,
+              divisions: 19,
+              label: 'Rp ${priceValue.toStringAsFixed(0)}',
+              onChanged: onPriceChanged,
+            ),
           ),
           const SizedBox(height: 10),
           const Text('Features', style: TextStyle(fontWeight: FontWeight.w700)),
@@ -302,20 +294,47 @@ class _FilterSheet extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: OutlinedButton(
-                  onPressed: onReset,
-                  child: const Text('Reset Filter'),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: appPrimaryColor, width: 1.4),
+                  ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: appPrimaryColor,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: onReset,
+                    child: const Text('Reset Filter'),
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    foregroundColor: Colors.white,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: customLinearGradient,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  onPressed: () {},
-                  child: const Text('Apply Filter'),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: const Text('Apply Filter'),
+                  ),
                 ),
               ),
             ],
@@ -336,10 +355,11 @@ class _FilterSheet extends StatelessWidget {
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: selected ? Colors.teal : Colors.white,
+          gradient: selected ? customLinearGradient : null,
+          color: selected ? null : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: selected ? Colors.teal : Colors.grey.shade300,
+            color: selected ? Colors.transparent : Colors.grey.shade300,
           ),
         ),
         child: Text(
@@ -394,11 +414,84 @@ class _FilterChipItem extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            color: selected ? Colors.white : Colors.teal,
+            color: selected ? Colors.white : appPrimaryColor,
             fontWeight: FontWeight.w600,
           ),
         ),
       ),
+    );
+  }
+}
+
+class _GradientIcon extends StatelessWidget {
+  const _GradientIcon(this.icon, {required this.size});
+
+  final IconData icon;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return ShaderMask(
+      shaderCallback: (bounds) =>
+          customLinearGradient.createShader(Rect.fromLTWH(0, 0, size, size)),
+      child: Icon(icon, size: size, color: Colors.white),
+    );
+  }
+}
+
+class _GradientSliderTrackShape extends RoundedRectSliderTrackShape {
+  const _GradientSliderTrackShape();
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset offset, {
+    double additionalActiveTrackHeight = 2,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required Animation<double> enableAnimation,
+    required TextDirection textDirection,
+    required Offset thumbCenter,
+    bool isEnabled = false,
+    bool isDiscrete = false,
+    Offset? secondaryOffset,
+  }) {
+    final trackRect = getPreferredRect(
+      parentBox: parentBox,
+      sliderTheme: sliderTheme,
+      isDiscrete: isDiscrete,
+      isEnabled: isEnabled,
+      offset: offset,
+    );
+
+    final activePaint = Paint()
+      ..shader = customLinearGradient.createShader(trackRect);
+
+    final inactivePaint = Paint()
+      ..color = sliderTheme.inactiveTrackColor ?? Colors.grey;
+
+    final leftRect = Rect.fromLTRB(
+      trackRect.left,
+      trackRect.top,
+      thumbCenter.dx,
+      trackRect.bottom,
+    );
+
+    final rightRect = Rect.fromLTRB(
+      thumbCenter.dx,
+      trackRect.top,
+      trackRect.right,
+      trackRect.bottom,
+    );
+
+    context.canvas.drawRRect(
+      RRect.fromRectAndRadius(leftRect, Radius.circular(trackRect.height / 2)),
+      activePaint,
+    );
+
+    context.canvas.drawRRect(
+      RRect.fromRectAndRadius(rightRect, Radius.circular(trackRect.height / 2)),
+      inactivePaint,
     );
   }
 }

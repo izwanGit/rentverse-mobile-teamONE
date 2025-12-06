@@ -6,7 +6,9 @@ import 'package:rentverse/role/tenant/presentation/cubit/list_property/cubit.dar
 import 'package:rentverse/role/tenant/presentation/cubit/list_property/state.dart';
 
 class ListPropertyWidget extends StatelessWidget {
-  const ListPropertyWidget({super.key});
+  const ListPropertyWidget({super.key, this.limitToThree = false});
+
+  final bool limitToThree;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +20,7 @@ class ListPropertyWidget extends StatelessWidget {
           state.isLoading,
           state.isLoadingMore,
           state.hasMore,
+          limitToThree,
         );
       },
     );
@@ -31,6 +34,7 @@ Widget _buildPropertyList(
   bool isLoading,
   bool isLoadingMore,
   bool hasMore,
+  bool limitToThree,
 ) {
   if (isLoading && items.isEmpty) {
     return const SizedBox(
@@ -51,8 +55,7 @@ Widget _buildPropertyList(
     );
   }
 
-  // Limit the visible items to three for home usage without changing API params.
-  final visibleItems = items.take(3).toList();
+  final visibleItems = limitToThree ? items.take(3).toList() : items;
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -108,9 +111,14 @@ Widget _buildPropertyList(
 
 /// Item builder function
 Widget _buildPropertyItem(PropertyEntity property) {
-  final imageUrl = property.images.isNotEmpty
-      ? property.images.first.url
-      : null;
+  String? imageUrl;
+  if (property.images.isNotEmpty) {
+    final primary = property.images.firstWhere(
+      (img) => img.isPrimary,
+      orElse: () => property.images.first,
+    );
+    imageUrl = primary.url.isNotEmpty ? primary.url : null;
+  }
   final attrBed = property.attributes.firstWhere(
     (a) => a.attributeType?.slug == 'bedroom',
     orElse: () => const PropertyAttributeEntity(

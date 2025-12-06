@@ -73,8 +73,9 @@ class PropertyEntity {
 
 class PropertyImageEntity {
   final String url;
+  final bool isPrimary;
 
-  const PropertyImageEntity({required this.url});
+  const PropertyImageEntity({required this.url, required this.isPrimary});
 }
 
 class PropertyTypeEntity {
