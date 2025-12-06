@@ -17,7 +17,7 @@ dependencies:
   floor: ^1.4.2
   retrofit: ^4.1.0
   flutter_hooks: ^0.21.2
-  cached_network_image: ^3.2.0
+  cached_network_image: ^3.4.1
   cupertino_icons: ^1.0.8
   dio: ^5.8.0
   logger: ^2.6.0
@@ -58,6 +58,7 @@ flutter:
     - assets/banner.png
     - assets/banner1.png
     - assets/banner2.png
+    - dummy_data/city.json
 
 
   # To add assets to your application, add an assets section, like this:

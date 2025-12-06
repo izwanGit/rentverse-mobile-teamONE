@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rentverse/core/services/service_locator.dart';
 import 'package:rentverse/role/tenant/presentation/cubit/get_user/cubit.dart';
 import 'package:rentverse/role/tenant/presentation/cubit/get_user/state.dart';
+import 'package:rentverse/role/tenant/presentation/widget/city_carousel.dart';
 import 'package:rentverse/role/tenant/presentation/widget/search_and_sort_widget.dart';
 
 import '../widget/carousel_custom.dart';
@@ -117,7 +118,9 @@ class TenantHomePage extends StatelessWidget {
                 CarouselCustom(),
                 SizedBox(height: 0),
                 SearchAndSortWidget(),
-                SizedBox(height: 2),
+                SizedBox(height: 6),
+                CityCarousel(),
+                SizedBox(height: 6),
                 Text(
                   'Tenant Home Page',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
