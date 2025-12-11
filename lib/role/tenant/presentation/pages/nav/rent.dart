@@ -44,7 +44,7 @@ class _TenantRentPageState extends State<TenantRentPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 8,
+      length: 7,
       child: BlocProvider(
         create: (_) =>
             RentCubit(sl<GetBookingsUseCase>(), sl<PayInvoiceUseCase>())
@@ -92,11 +92,10 @@ class _TenantRentPageState extends State<TenantRentPage> {
               unselectedLabelColor: Colors.black,
               tabs: [
                 Tab(text: 'Pending'),
-                Tab(text: 'Active'),
-                Tab(text: 'Completed'),
-                Tab(text: 'Cancelled'),
                 Tab(text: 'Pending Payment'),
                 Tab(text: 'Paid'),
+                Tab(text: 'Active'),
+                Tab(text: 'Completed'),
                 Tab(text: 'Overdue'),
                 Tab(text: 'Canceled'),
               ],
@@ -108,70 +107,102 @@ class _TenantRentPageState extends State<TenantRentPage> {
                 return Center(child: Text(state.error!));
               }
 
-              final bookingPending = _sorted(state.pendingPayment);
-              final bookingActive = _sorted(state.active);
-              final bookingCompleted = _sorted(state.completed);
-              final bookingCancelled = _sorted(state.cancelled);
+              // Aggregate all bookings into a single map to avoid duplicates
+              final allMap = <String, BookingListItemEntity>{};
+              for (final list in [
+                state.pendingPayment,
+                state.active,
+                state.completed,
+                state.cancelled,
+                state.paymentPending,
+                state.paymentPaid,
+                state.paymentOverdue,
+                state.paymentCanceled,
+              ]) {
+                for (final b in list) {
+                  allMap[b.id] = b;
+                }
+              }
 
-              final paymentPending = _sorted(state.paymentPending);
-              final paid = _sorted(state.paymentPaid);
-              final overdue = _sorted(state.paymentOverdue);
-              final canceled = _sorted(state.paymentCanceled);
+              final all = allMap.values.toList();
+
+              // Helper to filter by exact status matches (case-insensitive)
+              List<BookingListItemEntity> byStatuses(List<String> statuses) {
+                final set = statuses.map((s) => s.toUpperCase()).toSet();
+                return all
+                    .where((b) => set.contains(b.status.toUpperCase()))
+                    .toList();
+              }
+
+              // New tab order requested: Pending, Pending Payment, Paid,
+              // Active, Completed, Overdue, Canceled
+              final bookingPending = byStatuses(['PENDING', 'PENDING_PAYMENT']);
+              final bookingPendingPayment = byStatuses(['CONFIRMED']);
+              final bookingPaid = byStatuses(['PAID']);
+              final bookingActive = byStatuses(['ACTIVE']);
+              final bookingCompleted = byStatuses(['COMPLETED']);
+              final bookingOverdue = byStatuses(['OVERDUE']);
+              final bookingCanceled = all.where((b) {
+                final s = b.status.toUpperCase();
+                return s.contains('CANCEL');
+              }).toList();
 
               return TabBarView(
                 children: [
+                  // Pending (PENDING, PENDING_PAYMENT) — PENDING_PAYMENT should
+                  // show disabled button with label "Waiting For Accept".
                   _BookingList(
                     statusLabel: 'Approved by the owner',
-                    items: bookingPending,
+                    items: _sorted(bookingPending),
                     buttonLabel: 'Go to Payment',
+                    isPendingTab: true,
                     onTap: (item) => _handlePayment(context, item),
                   ),
-                  _BookingList(
-                    statusLabel: 'Active Booking',
-                    items: bookingActive,
-                    buttonLabel: 'View Detail',
-                    onTap: (item) => _openActiveDetail(context, item),
-                  ),
-                  _BookingList(
-                    statusLabel: 'Completed',
-                    items: bookingCompleted,
-                    buttonLabel: 'View Detail',
-                    onTap: (item) => _openActiveDetail(context, item),
-                  ),
-                  _BookingList(
-                    statusLabel: 'Cancelled',
-                    items: bookingCancelled,
-                    buttonLabel: 'View Detail',
-                    onTap: (item) => _openActiveDetail(context, item),
-                  ),
+
+                  // Pending Payment (CONFIRMED)
                   _BookingList(
                     statusLabel: 'Waiting for payment',
-                    items: paymentPending,
+                    items: _sorted(bookingPendingPayment),
                     buttonLabel: 'Go to Payment',
                     onTap: (item) => _handlePayment(context, item),
-                    leading: const Text(
-                      '***',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1CD8D2),
-                      ),
-                    ),
                   ),
+
+                  // Paid
                   _BookingList(
                     statusLabel: 'Paid',
-                    items: paid,
+                    items: _sorted(bookingPaid),
                     buttonLabel: 'View Detail',
                     onTap: (item) => _openActiveDetail(context, item),
                   ),
+
+                  // Active
+                  _BookingList(
+                    statusLabel: 'Active Booking',
+                    items: _sorted(bookingActive),
+                    buttonLabel: 'View Detail',
+                    onTap: (item) => _openActiveDetail(context, item),
+                  ),
+
+                  // Completed
+                  _BookingList(
+                    statusLabel: 'Completed',
+                    items: _sorted(bookingCompleted),
+                    buttonLabel: 'View Detail',
+                    onTap: (item) => _openActiveDetail(context, item),
+                  ),
+
+                  // Overdue
                   _BookingList(
                     statusLabel: 'Overdue',
-                    items: overdue,
+                    items: _sorted(bookingOverdue),
                     buttonLabel: 'Go to Payment',
                     onTap: (item) => _handlePayment(context, item),
                   ),
+
+                  // Canceled
                   _BookingList(
                     statusLabel: 'Canceled',
-                    items: canceled,
+                    items: _sorted(bookingCanceled),
                     buttonLabel: 'View Detail',
                     onTap: (item) => _openActiveDetail(context, item),
                   ),
@@ -186,19 +217,20 @@ class _TenantRentPageState extends State<TenantRentPage> {
 }
 
 class _BookingList extends StatelessWidget {
+  final String statusLabel;
+  final List<BookingListItemEntity> items;
+  final String buttonLabel;
+  final void Function(BookingListItemEntity) onTap;
+  final bool isPendingTab;
   const _BookingList({
     required this.statusLabel,
     required this.items,
     required this.buttonLabel,
     required this.onTap,
-    this.leading,
+    this.isPendingTab = false,
   });
 
-  final String statusLabel;
-  final List<BookingListItemEntity> items;
-  final String buttonLabel;
-  final void Function(BookingListItemEntity) onTap;
-  final Widget? leading;
+  final Widget? leading = null;
 
   @override
   Widget build(BuildContext context) {
@@ -214,6 +246,8 @@ class _BookingList extends StatelessWidget {
           buttonLabel: buttonLabel,
           leading: leading,
           onTap: () => onTap(item),
+          status: item.status,
+          isPendingTab: isPendingTab,
         );
       },
       separatorBuilder: (_, __) => const SizedBox(height: 12),
@@ -231,6 +265,8 @@ class _BookingListItemCard extends StatelessWidget {
     required this.buttonLabel,
     required this.onTap,
     this.leading,
+    required this.status,
+    this.isPendingTab = false,
   });
 
   final String statusLabel;
@@ -240,6 +276,8 @@ class _BookingListItemCard extends StatelessWidget {
   final String buttonLabel;
   final VoidCallback onTap;
   final Widget? leading;
+  final String status;
+  final bool isPendingTab;
 
   @override
   Widget build(BuildContext context) {
@@ -350,9 +388,17 @@ class _BookingListItemCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(24),
                                 ),
                               ),
-                              onPressed: onTap, // Always enable button
+                              onPressed:
+                                  (isPendingTab &&
+                                      status.toUpperCase() == 'PENDING_PAYMENT')
+                                  ? null
+                                  : onTap,
                               child: Text(
-                                buttonLabel,
+                                (isPendingTab &&
+                                        status.toUpperCase() ==
+                                            'PENDING_PAYMENT')
+                                    ? 'Waiting For Accept'
+                                    : buttonLabel,
                                 style: const TextStyle(color: Colors.white),
                               ),
                             ),

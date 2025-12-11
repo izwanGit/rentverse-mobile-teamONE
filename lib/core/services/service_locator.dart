@@ -66,6 +66,11 @@ import 'package:rentverse/role/lanlord/data/repository/landlord_dashboard_reposi
 import 'package:rentverse/role/lanlord/domain/repository/landlord_dashboard_repository.dart';
 import 'package:rentverse/role/lanlord/domain/usecase/get_landlord_dashboard_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rentverse/features/disputes/data/source/disputes_api_service.dart';
+import 'package:rentverse/features/disputes/data/repository/disputes_repository_impl.dart';
+import 'package:rentverse/features/disputes/domain/repository/dispute_repository.dart';
+import 'package:rentverse/features/disputes/domain/usecase/get_my_disputes_usecase.dart';
+import 'package:rentverse/features/disputes/domain/usecase/create_dispute_usecase.dart';
 
 final sl = GetIt.instance;
 
@@ -114,6 +119,15 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton<ChatRepository>(
     () => ChatRepositoryImpl(sl<ChatApiService>()),
   );
+  // Disputes
+  sl.registerLazySingleton<DisputesApiService>(
+    () => DisputesApiServiceImpl(sl<DioClient>(), sl<Logger>()),
+  );
+  sl.registerLazySingleton<DisputeRepository>(
+    () => DisputesRepositoryImpl(sl<DisputesApiService>()),
+  );
+  sl.registerLazySingleton(() => GetMyDisputesUseCase(sl<DisputeRepository>()));
+  sl.registerLazySingleton(() => CreateDisputeUseCase(sl<DisputeRepository>()));
   sl.registerLazySingleton<BookingApiService>(
     () => BookingApiServiceImpl(sl<DioClient>()),
   );

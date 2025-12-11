@@ -135,7 +135,6 @@ class DetailProperty extends StatelessWidget {
                     ),
                   );
                 },
-                onChat: () => _startChat(context, currentProperty),
               ),
             ),
           );

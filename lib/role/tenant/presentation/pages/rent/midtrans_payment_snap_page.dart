@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:midtrans_snap/constants.dart';
 import 'package:midtrans_snap/midtrans_snap.dart';
 import 'package:midtrans_snap/models.dart';
 
