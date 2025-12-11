@@ -150,4 +150,61 @@ class AuthRepositoryImpl implements AuthRepository {
     return _localDataSource
         .getLastUser(); // Panggil local data source yg kita buat tadi
   }
+
+  @override
+  Future<DataState<bool>> sendOtp({
+    required String target,
+    required String channel,
+  }) async {
+    try {
+      final body = {'target': target, 'channel': channel};
+      final httpResponse = await _apiService.sendOtp(body);
+
+      if (httpResponse.status.toLowerCase() == 'success') {
+        return DataSuccess(data: true);
+      }
+
+      return DataFailed(
+        DioException(
+          requestOptions: RequestOptions(path: '/auth/otp/send'),
+          error: httpResponse.message ?? 'Failed to send OTP',
+          type: DioExceptionType.badResponse,
+        ),
+      );
+    } on DioException catch (e) {
+      return DataFailed(e);
+    }
+  }
+
+  @override
+  Future<DataState<bool>> verifyOtp({
+    required String target,
+    required String channel,
+    required String code,
+  }) async {
+    try {
+      final body = {'target': target, 'channel': channel, 'code': code};
+      final httpResponse = await _apiService.verifyOtp(body);
+
+      if (httpResponse.status.toLowerCase() == 'success') {
+        // response.data may contain isUserUpdated flag
+        final data = httpResponse.data;
+        if (data != null && data['isUserUpdated'] != null) {
+          final isUpdated = data['isUserUpdated'] == true;
+          return DataSuccess(data: isUpdated);
+        }
+        return DataSuccess(data: true);
+      }
+
+      return DataFailed(
+        DioException(
+          requestOptions: RequestOptions(path: '/auth/otp/verify'),
+          error: httpResponse.message ?? 'OTP verification failed',
+          type: DioExceptionType.badResponse,
+        ),
+      );
+    } on DioException catch (e) {
+      return DataFailed(e);
+    }
+  }
 }

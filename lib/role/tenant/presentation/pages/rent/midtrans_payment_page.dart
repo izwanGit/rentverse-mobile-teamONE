@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rentverse/core/constant/api_urls.dart';
+import 'package:rentverse/common/bloc/auth/auth_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rentverse/common/screen/navigation_container.dart';
+import 'package:rentverse/role/tenant/presentation/pages/nav/chat.dart';
+import 'package:rentverse/role/tenant/presentation/pages/nav/home.dart';
+import 'package:rentverse/role/tenant/presentation/pages/nav/rent.dart';
+import 'package:rentverse/features/auth/presentation/pages/profile_pages.dart';
+import 'package:rentverse/role/tenant/presentation/pages/property/property.dart';
 import 'package:rentverse/features/bookings/domain/entity/res/booking_response_entity.dart';
 import 'package:rentverse/role/tenant/presentation/widget/midtrans/card_property.dart';
 import 'package:rentverse/role/tenant/presentation/widget/receipt_booking/property_rent_details.dart';
@@ -142,7 +150,7 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
 
     setState(() => _isProcessing = true);
 
-    await Navigator.of(context).push(
+    final res = await Navigator.of(context).push<dynamic>(
       MaterialPageRoute(
         builder: (_) => MidtransPaymentSnapPage(
           token: widget.snapToken,
@@ -152,7 +160,72 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
       ),
     );
 
-    if (mounted) setState(() => _isProcessing = false);
+    if (!mounted) return;
+    setState(() => _isProcessing = false);
+
+    // If payment succeeded (settlement/capture), navigate back to app home
+    // and reload user/profile data so app state is refreshed.
+    try {
+      final status = res is Map && res['transactionStatus'] != null
+          ? res['transactionStatus'] as String
+          : (res != null && res.transactionStatus != null
+                ? res.transactionStatus as String
+                : '');
+
+      if (status.toLowerCase() == 'settlement' ||
+          status.toLowerCase() == 'capture') {
+        // Trigger auth refresh
+        try {
+          context.read<AuthCubit>().checkAuthStatus();
+        } catch (_) {}
+
+        // Recreate tenant navigation and clear stack (acts like reload)
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => NavigationContainer(
+              initialIndex: 0,
+              pages: [
+                TenantHomePage(),
+                TenantPropertyPage(),
+                TenantRentPage(),
+                TenantChatPage(),
+                ProfilePage(),
+              ],
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home, color: Colors.grey),
+                  activeIcon: GradientIcon(icon: Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.apartment, color: Colors.grey),
+                  activeIcon: GradientIcon(icon: Icons.apartment),
+                  label: 'Property',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.receipt_long, color: Colors.grey),
+                  activeIcon: GradientIcon(icon: Icons.receipt_long),
+                  label: 'Rent',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.chat, color: Colors.grey),
+                  activeIcon: GradientIcon(icon: Icons.chat),
+                  label: 'Chat',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person, color: Colors.grey),
+                  activeIcon: GradientIcon(icon: Icons.person),
+                  label: 'Profile',
+                ),
+              ],
+            ),
+          ),
+          (route) => false,
+        );
+      }
+    } catch (_) {
+      // ignore parsing errors
+    }
   }
 
   void _showSnack(String message) {

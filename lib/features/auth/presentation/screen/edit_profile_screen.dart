@@ -6,6 +6,9 @@ import 'package:rentverse/features/auth/presentation/cubit/edit_profile/edit_pro
 import 'package:rentverse/features/auth/presentation/cubit/edit_profile/edit_profile_state.dart';
 import 'package:rentverse/features/auth/presentation/widget/custom_text_field.dart';
 import 'package:rentverse/features/auth/presentation/screen/verify_ikyc_screen.dart';
+import 'package:rentverse/features/auth/presentation/screen/otp_verification_screen.dart';
+import 'package:rentverse/features/auth/domain/usecase/send_otp_usecase.dart';
+import 'package:rentverse/core/resources/data_state.dart';
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
@@ -76,7 +79,51 @@ class EditProfileScreen extends StatelessWidget {
                               color: Colors.grey,
                             ),
                             suffixIcon: TextButton(
-                              onPressed: state.isEmailVerified ? null : () {},
+                              onPressed: state.isEmailVerified
+                                  ? null
+                                  : () async {
+                                      final target = state.emailValue;
+                                      if (target.isEmpty) return;
+
+                                      // send OTP then navigate to verification screen
+                                      final sendUsecase = sl<SendOtpUseCase>();
+                                      final params = SendOtpParams(
+                                        target: target,
+                                        channel: 'EMAIL',
+                                      );
+                                      final res = await sendUsecase.call(
+                                        param: params,
+                                      );
+                                      if (res is DataSuccess<bool>) {
+                                        final verified =
+                                            await Navigator.of(
+                                              context,
+                                            ).push<bool>(
+                                              MaterialPageRoute(
+                                                builder: (_) =>
+                                                    OtpVerificationScreen(
+                                                      target: target,
+                                                      channel: 'EMAIL',
+                                                    ),
+                                              ),
+                                            );
+
+                                        if (verified == true) {
+                                          // refresh profile on return
+                                          cubit.loadProfile();
+                                        }
+                                      } else if (res is DataFailed) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Failed to send OTP: ${res.error}',
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
                               child: Text(
                                 'Verify',
                                 style: TextStyle(
@@ -128,7 +175,42 @@ class EditProfileScreen extends StatelessWidget {
                               color: Colors.grey,
                             ),
                             suffixIcon: TextButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                final target = state.phoneValue;
+                                if (target.isEmpty) return;
+
+                                final sendUsecase = sl<SendOtpUseCase>();
+                                final params = SendOtpParams(
+                                  target: target,
+                                  channel: 'WHATSAPP',
+                                );
+                                final res = await sendUsecase.call(
+                                  param: params,
+                                );
+                                if (res is DataSuccess<bool>) {
+                                  final verified = await Navigator.of(context)
+                                      .push<bool>(
+                                        MaterialPageRoute(
+                                          builder: (_) => OtpVerificationScreen(
+                                            target: target,
+                                            channel: 'WHATSAPP',
+                                          ),
+                                        ),
+                                      );
+
+                                  if (verified == true) {
+                                    cubit.loadProfile();
+                                  }
+                                } else if (res is DataFailed) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Failed to send OTP: ${res.error}',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
                               child: Text(
                                 hasPhone && !state.isPhoneVerified
                                     ? 'Verify'

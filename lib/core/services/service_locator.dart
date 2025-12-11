@@ -12,6 +12,8 @@ import 'package:rentverse/features/auth/data/source/auth_local_service.dart';
 import 'package:rentverse/features/auth/domain/usecase/get_local_user_usecase.dart';
 import 'package:rentverse/features/auth/domain/usecase/get_user_usecase.dart';
 import 'package:rentverse/features/auth/domain/usecase/is_logged_in_usecase.dart';
+import 'package:rentverse/features/auth/domain/usecase/send_otp_usecase.dart';
+import 'package:rentverse/features/auth/domain/usecase/verify_otp_usecase.dart';
 import 'package:rentverse/features/auth/domain/usecase/login_usecase.dart';
 import 'package:rentverse/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:rentverse/features/auth/domain/usecase/register_usecase.dart';
@@ -176,6 +178,8 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton(() => UpdateProfileUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => GetUserUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => LogoutUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => SendOtpUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => VerifyOtpUseCase(sl<AuthRepository>()));
   // Property usecases
   sl.registerLazySingleton(
     () => GetPropertiesUseCase(sl<PropertyRepository>()),

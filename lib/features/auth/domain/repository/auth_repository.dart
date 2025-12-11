@@ -10,7 +10,18 @@ abstract class AuthRepository {
   Future<DataState<UserEntity>> login(LoginRequestEntity params);
   Future<DataState<UserEntity>> register(RegisterRequestEntity params);
   Future<DataState<UserEntity>> getUserProfile();
-  Future<DataState<UserEntity>> updateProfile(UpdateProfileRequestEntity params);
+  Future<DataState<UserEntity>> updateProfile(
+    UpdateProfileRequestEntity params,
+  );
+  Future<DataState<bool>> sendOtp({
+    required String target,
+    required String channel,
+  });
+  Future<DataState<bool>> verifyOtp({
+    required String target,
+    required String channel,
+    required String code,
+  });
   Future<void> logout();
   Future<bool> isLoggedIn();
   Future<UserEntity?> getLastLocalUser(); // Cuma ambil dari SharedPrefs
