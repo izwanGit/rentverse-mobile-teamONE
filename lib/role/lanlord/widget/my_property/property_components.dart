@@ -58,8 +58,11 @@ class PropertyCard extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) =>
-                DetailProperty(property: property, showBookingButton: false),
+            builder: (_) => DetailProperty(
+              property: property,
+              showBookingButton: false,
+              forceShowEditButton: true,
+            ),
           ),
         );
       },

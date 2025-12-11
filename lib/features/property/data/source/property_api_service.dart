@@ -17,6 +17,10 @@ abstract class PropertyApiService {
     Map<String, dynamic> fields,
     List<String> imageFilePaths,
   );
+  Future<PropertyDetailResponseModel> updateProperty(
+    String id,
+    Map<String, dynamic> fields,
+  );
 }
 
 class PropertyApiServiceImpl implements PropertyApiService {
@@ -107,6 +111,26 @@ class PropertyApiServiceImpl implements PropertyApiService {
         '/properties',
         data: formData,
         options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+      );
+
+      return PropertyDetailResponseModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<PropertyDetailResponseModel> updateProperty(
+    String id,
+    Map<String, dynamic> fields,
+  ) async {
+    try {
+      final response = await _dioClient.patch(
+        '/properties/$id',
+        data: fields,
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       return PropertyDetailResponseModel.fromJson(

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:rentverse/features/property/domain/entity/list_property_entity.dart';
+import 'package:rentverse/common/utils/network_utils.dart';
 
 /// Image gallery with a large preview and tappable thumbnails.
 class ImageTile extends StatefulWidget {
@@ -86,8 +87,9 @@ class _ImageTileState extends State<ImageTile> {
     if (url.isEmpty) {
       return _fallbackBox();
     }
+    final processed = makeDeviceAccessibleUrl(url) ?? url;
     return CachedNetworkImage(
-      imageUrl: url,
+      imageUrl: processed,
       fit: BoxFit.cover,
       placeholder: (_, __) => Container(color: Colors.grey.shade200),
       errorWidget: (_, __, ___) => _fallbackBox(),

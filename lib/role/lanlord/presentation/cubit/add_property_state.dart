@@ -15,7 +15,6 @@ class AddPropertyState extends Equatable {
   final int propertyTypeId;
   final int listingTypeId;
   final String projectName;
-  final String developer;
   final String address;
   final String city;
   final String country;
@@ -43,7 +42,6 @@ class AddPropertyState extends Equatable {
     this.propertyTypeId = 1,
     this.listingTypeId = 1,
     this.projectName = '',
-    this.developer = '',
     this.address = '',
     this.city = '',
     this.country = 'Indonesia',
@@ -71,7 +69,6 @@ class AddPropertyState extends Equatable {
     int? propertyTypeId,
     int? listingTypeId,
     String? projectName,
-    String? developer,
     String? address,
     String? city,
     String? country,
@@ -98,7 +95,6 @@ class AddPropertyState extends Equatable {
       propertyTypeId: propertyTypeId ?? this.propertyTypeId,
       listingTypeId: listingTypeId ?? this.listingTypeId,
       projectName: projectName ?? this.projectName,
-      developer: developer ?? this.developer,
       address: address ?? this.address,
       city: city ?? this.city,
       country: country ?? this.country,
@@ -128,7 +124,6 @@ class AddPropertyState extends Equatable {
     propertyTypeId,
     listingTypeId,
     projectName,
-    developer,
     address,
     city,
     country,

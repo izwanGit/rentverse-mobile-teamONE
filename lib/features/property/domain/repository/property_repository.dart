@@ -10,4 +10,5 @@ abstract class PropertyRepository {
   Future<ListPropertyEntity> getProperties({int? limit, String? cursor});
   Future<PropertyEntity> getPropertyDetail(String id);
   Future<PropertyEntity> createProperty(CreatePropertyParams params);
+  Future<PropertyEntity> updateProperty(String id, Map<String, dynamic> fields);
 }

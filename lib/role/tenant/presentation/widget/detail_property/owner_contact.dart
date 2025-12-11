@@ -8,6 +8,7 @@ class OwnerContact extends StatelessWidget {
     this.avatarUrl,
     this.onCall,
     this.onChat,
+    this.onEdit,
   });
 
   final String landlordId;
@@ -15,6 +16,7 @@ class OwnerContact extends StatelessWidget {
   final String? avatarUrl;
   final VoidCallback? onCall;
   final VoidCallback? onChat;
+  final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +78,10 @@ class OwnerContact extends StatelessWidget {
               _ContactIcon(icon: Icons.call, onTap: onCall),
               const SizedBox(width: 10),
               _ContactIcon(icon: Icons.chat, onTap: onChat),
+              if (onEdit != null) ...[
+                const SizedBox(width: 10),
+                _ContactIcon(icon: Icons.edit, onTap: onEdit),
+              ],
             ],
           ),
         ],

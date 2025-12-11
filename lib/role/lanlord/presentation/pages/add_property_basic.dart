@@ -17,7 +17,6 @@ class _AddPropertyBasicPageState extends State<AddPropertyBasicPage> {
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
   late TextEditingController _projectController;
-  late TextEditingController _developerController;
   late TextEditingController _addressController;
   late TextEditingController _cityController;
   late TextEditingController _countryController;
@@ -47,7 +46,6 @@ class _AddPropertyBasicPageState extends State<AddPropertyBasicPage> {
     _titleController = TextEditingController(text: state.title);
     _descriptionController = TextEditingController(text: state.description);
     _projectController = TextEditingController(text: state.projectName);
-    _developerController = TextEditingController(text: state.developer);
     _addressController = TextEditingController(text: state.address);
     _cityController = TextEditingController(text: state.city);
     _countryController = TextEditingController(text: state.country);
@@ -64,7 +62,6 @@ class _AddPropertyBasicPageState extends State<AddPropertyBasicPage> {
     _titleController.dispose();
     _descriptionController.dispose();
     _projectController.dispose();
-    _developerController.dispose();
     _addressController.dispose();
     _cityController.dispose();
     _countryController.dispose();
@@ -129,13 +126,6 @@ class _AddPropertyBasicPageState extends State<AddPropertyBasicPage> {
                   label: 'Project / building name',
                   controller: _projectController,
                   hint: 'Bandaraya Georgetown...',
-                  onChanged: (_) => _onChange(),
-                ),
-                const SizedBox(height: 12),
-                _LabeledField(
-                  label: 'Developer',
-                  controller: _developerController,
-                  hint: 'Developer name',
                   onChanged: (_) => _onChange(),
                 ),
                 const SizedBox(height: 12),
@@ -311,7 +301,6 @@ class _AddPropertyBasicPageState extends State<AddPropertyBasicPage> {
       _titleController.text = state.title;
       _descriptionController.text = state.description;
       _projectController.text = state.projectName;
-      _developerController.text = state.developer;
       _addressController.text = state.address;
       _cityController.text = state.city;
       _countryController.text = state.country;
@@ -331,7 +320,6 @@ class _AddPropertyBasicPageState extends State<AddPropertyBasicPage> {
       propertyTypeId: _propertyTypeId,
       listingTypeId: _listingTypeId,
       projectName: _projectController.text,
-      developer: _developerController.text,
       address: _addressController.text,
       city: _cityController.text,
       country: _countryController.text,
@@ -353,7 +341,6 @@ class _AddPropertyBasicPageState extends State<AddPropertyBasicPage> {
       propertyTypeId: _propertyTypeId,
       listingTypeId: _listingTypeId,
       projectName: _projectController.text,
-      developer: _developerController.text,
       address: _addressController.text,
       city: _cityController.text,
       country: _countryController.text,

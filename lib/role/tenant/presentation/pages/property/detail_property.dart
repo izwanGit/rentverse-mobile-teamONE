@@ -11,6 +11,7 @@ import 'package:rentverse/features/chat/presentation/pages/chat_room_page.dart';
 import 'package:rentverse/features/chat/domain/usecase/start_chat_usecase.dart';
 import 'package:rentverse/common/bloc/auth/auth_cubit.dart';
 import 'package:rentverse/common/bloc/auth/auth_state.dart';
+import 'package:rentverse/common/utils/network_utils.dart';
 import 'package:rentverse/role/tenant/presentation/widget/detail_property/amenities_widget.dart';
 import 'package:rentverse/role/tenant/presentation/widget/detail_property/accessorise_widget.dart';
 import 'package:rentverse/role/tenant/presentation/widget/detail_property/image_tile.dart';
@@ -70,7 +71,9 @@ class DetailProperty extends StatelessWidget {
                         OwnerContact(
                           landlordId: currentProperty.landlordId,
                           ownerName: _extractOwnerName(currentProperty),
-                          avatarUrl: _extractOwnerAvatar(currentProperty),
+                          avatarUrl: makeDeviceAccessibleUrl(
+                            _extractOwnerAvatar(currentProperty),
+                          ),
                           onChat: () => _startChat(context, currentProperty),
                         ),
                         const SizedBox(height: 10),

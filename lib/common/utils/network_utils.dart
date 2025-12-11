@@ -1,18 +1,22 @@
-import 'dart:io';
-
-/// Keep backend URLs as-is but map `0.0.0.0` to the Android emulator loopback
-/// so images remain reachable on device while still using the original endpoint.
+/// Keep backend URLs as-is but map `0.0.0.0` / `localhost` to your laptop IP
+/// so images remain reachable on a physical Android device while still
+/// allowing usage of the original endpoint strings in development.
 String? makeDeviceAccessibleUrl(String? url) {
   if (url == null) return null;
-  if (!url.contains('0.0.0.0')) return url;
+  // Your laptop IP (use your machine's interface IP so a physical Android
+  // device can reach services hosted on your laptop).
+  const String laptopIp = '10.110.155.17';
 
-  try {
-    if (Platform.isAndroid) {
-      return url.replaceFirst('0.0.0.0', '10.0.2.2');
+  // Replace common host placeholders with the laptop IP so the device can
+  // reach the backend. Handles both `0.0.0.0` and `localhost`.
+  if (url.contains('0.0.0.0') || url.contains('localhost')) {
+    try {
+      return url.replaceAll(RegExp(r'0\.0\.0\.0|localhost'), laptopIp);
+    } catch (_) {
+      // If replacement fails for any reason, fall through and return original URL.
     }
-  } catch (_) {
-    // If Platform checks fail (e.g. web), leave the URL unchanged.
   }
 
+  // Fallback: if nothing matched or replacement failed, return original URL.
   return url;
 }

@@ -11,12 +11,14 @@ import 'package:rentverse/features/chat/presentation/pages/chat_room_page.dart';
 import 'package:rentverse/features/chat/domain/usecase/start_chat_usecase.dart';
 import 'package:rentverse/common/bloc/auth/auth_cubit.dart';
 import 'package:rentverse/common/bloc/auth/auth_state.dart';
+import 'package:rentverse/common/utils/network_utils.dart';
 import 'package:rentverse/role/tenant/presentation/widget/detail_property/amenities_widget.dart';
 import 'package:rentverse/role/tenant/presentation/widget/detail_property/accessorise_widget.dart';
 import 'package:rentverse/role/tenant/presentation/widget/detail_property/image_tile.dart';
 import 'package:rentverse/role/tenant/presentation/widget/detail_property/owner_contact.dart';
 import 'package:rentverse/role/tenant/presentation/widget/detail_property/booking_button.dart';
 import 'package:rentverse/role/tenant/presentation/pages/property/booking_property.dart';
+import 'package:rentverse/role/lanlord/presentation/pages/edit_property.dart';
 import 'package:rentverse/role/tenant/presentation/cubit/detail_property/cubit.dart';
 import 'package:rentverse/role/tenant/presentation/cubit/detail_property/state.dart';
 
@@ -25,10 +27,12 @@ class DetailProperty extends StatelessWidget {
     super.key,
     required this.property,
     this.showBookingButton = true,
+    this.forceShowEditButton = false,
   });
 
   final PropertyEntity property;
   final bool showBookingButton;
+  final bool forceShowEditButton;
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +79,23 @@ class DetailProperty extends StatelessWidget {
                         OwnerContact(
                           landlordId: currentProperty.landlordId,
                           ownerName: _extractOwnerName(currentProperty),
-                          avatarUrl: _extractOwnerAvatar(currentProperty),
+                          avatarUrl: makeDeviceAccessibleUrl(
+                            _extractOwnerAvatar(currentProperty),
+                          ),
                           onChat: () => _startChat(context, currentProperty),
+                          onEdit: (() {
+                            final authState = context.read<AuthCubit>().state;
+                            final isOwner =
+                                authState is Authenticated &&
+                                authState.user.id == currentProperty.landlordId;
+                            if (!isOwner && !forceShowEditButton) return;
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    EditPropertyPage(property: currentProperty),
+                              ),
+                            );
+                          }),
                         ),
                         const SizedBox(height: 10),
                         Container(
@@ -128,17 +147,67 @@ class DetailProperty extends StatelessWidget {
                 ],
               ),
               bottomNavigationBar: showBookingButton
-                  ? BookingButton(
-                      price: currentProperty.price,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                BookingPropertyPage(property: currentProperty),
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        BookingButton(
+                          price: currentProperty.price,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => BookingPropertyPage(
+                                  property: currentProperty,
+                                ),
+                              ),
+                            );
+                          },
+                          onChat: () => _startChat(context, currentProperty),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
                           ),
-                        );
-                      },
-                      onChat: () => _startChat(context, currentProperty),
+                          child: Row(
+                            children: [
+                              BlocBuilder<AuthCubit, AuthState>(
+                                builder: (context, authState) {
+                                  final isOwner =
+                                      authState is Authenticated &&
+                                      authState.user.id ==
+                                          currentProperty.landlordId;
+                                  if (!isOwner) return const SizedBox.shrink();
+                                  return Expanded(
+                                    child: OutlinedButton.icon(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => EditPropertyPage(
+                                              property: currentProperty,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.edit),
+                                      label: const Text('Edit Property'),
+                                      style: OutlinedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 14,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     )
                   : null,
             ),

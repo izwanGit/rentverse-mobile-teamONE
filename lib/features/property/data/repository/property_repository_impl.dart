@@ -67,4 +67,13 @@ class PropertyRepositoryImpl implements PropertyRepository {
 
     return response.toEntity();
   }
+
+  @override
+  Future<PropertyEntity> updateProperty(
+    String id,
+    Map<String, dynamic> fields,
+  ) async {
+    final response = await _apiService.updateProperty(id, fields);
+    return response.toEntity();
+  }
 }
