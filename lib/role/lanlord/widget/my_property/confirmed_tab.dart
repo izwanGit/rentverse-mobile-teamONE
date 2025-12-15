@@ -6,6 +6,7 @@ import 'package:rentverse/features/bookings/domain/entity/res/booking_list_entit
 import 'package:rentverse/role/lanlord/presentation/cubit/booking_request/cubit.dart';
 import 'package:rentverse/role/lanlord/presentation/cubit/booking_request/state.dart';
 import 'package:rentverse/role/lanlord/widget/my_property/property_components.dart';
+import 'package:rentverse/role/lanlord/presentation/pages/booking_detail.dart';
 
 class ConfirmedTab extends StatelessWidget {
   const ConfirmedTab({super.key});
@@ -73,44 +74,59 @@ class _ConfirmedCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.green.shade200),
       ),
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _PropertyThumb(item: item),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.property.title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  item.property.city,
-                  style: const TextStyle(fontSize: 13, color: Colors.grey),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  _dateRange(item.startDate, item.endDate),
-                  style: const TextStyle(fontSize: 12, color: Colors.black87),
-                ),
-                const SizedBox(height: 6),
-                _StatusBadge(
-                  label: 'CONFIRMED',
-                  color: const Color(0xFF1CD8D2),
-                ),
-              ],
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => LandlordBookingDetailPage(booking: item),
             ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _PropertyThumb(item: item),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.property.title,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      item.property.city,
+                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      _dateRange(item.startDate, item.endDate),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    _StatusBadge(
+                      label: 'CONFIRMED',
+                      color: const Color(0xFF1CD8D2),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

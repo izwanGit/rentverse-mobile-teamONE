@@ -11,6 +11,7 @@ import 'package:rentverse/role/tenant/presentation/widget/detail_property/access
 import 'package:rentverse/role/tenant/presentation/cubit/rent/active_rent_detail_cubit.dart';
 import 'package:rentverse/role/tenant/presentation/cubit/rent/active_rent_detail_state.dart';
 import 'package:rentverse/role/tenant/presentation/widget/review/review_widget.dart';
+import 'package:rentverse/features/disputes/presentation/pages/create_dispute_page.dart';
 
 class ActiveRentDetailPage extends StatelessWidget {
   const ActiveRentDetailPage({super.key, required this.booking});
@@ -315,6 +316,7 @@ class _ActionBar extends StatefulWidget {
 
 class _ActionBarState extends State<_ActionBar> {
   bool _alreadyReviewed = false;
+  bool _justDisputed = false;
 
   Future<void> _handleReview() async {
     final outcome = await showReviewDialog(
@@ -332,6 +334,22 @@ class _ActionBarState extends State<_ActionBar> {
     }
   }
 
+  Future<void> _openDispute() async {
+    final submitted = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) =>
+            CreateDisputePage.withProvider(bookingId: widget.booking.id),
+      ),
+    );
+
+    if (submitted == true && mounted) {
+      setState(() => _justDisputed = true);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Dispute submitted')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final status = widget.booking.status.toUpperCase();
@@ -344,7 +362,23 @@ class _ActionBarState extends State<_ActionBar> {
         : _handleReview;
 
     if (isFinished) {
-      return CustomButton(text: reviewLabel, onTap: reviewAction);
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          CustomButton(text: 'Raise Dispute', onTap: _openDispute),
+          const SizedBox(height: 10),
+          CustomButton(text: reviewLabel, onTap: reviewAction),
+          if (_justDisputed)
+            const Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: Text(
+                'Dispute submitted. We will follow up soon.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12, color: Colors.green),
+              ),
+            ),
+        ],
+      );
     }
 
     if (isActive) {
@@ -353,7 +387,18 @@ class _ActionBarState extends State<_ActionBar> {
         children: [
           CustomButton(text: 'Extend', onTap: widget.onExtend),
           const SizedBox(height: 10),
+          CustomButton(text: 'Raise Dispute', onTap: _openDispute),
+          const SizedBox(height: 10),
           CustomButton(text: reviewLabel, onTap: reviewAction),
+          if (_justDisputed)
+            const Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: Text(
+                'Dispute submitted. We will follow up soon.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12, color: Colors.green),
+              ),
+            ),
         ],
       );
     }

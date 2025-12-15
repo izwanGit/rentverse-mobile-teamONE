@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:rentverse/core/utils/error_utils.dart';
 import '../../domain/entity/dispute_entity.dart';
 import '../../domain/usecase/get_my_disputes_usecase.dart';
 import '../../domain/usecase/create_dispute_usecase.dart';
@@ -18,8 +20,13 @@ class DisputesCubit extends Cubit<DisputesState> {
     try {
       final list = await _getMyDisputes();
       emit(state.copyWith(status: DisputesStatus.success, disputes: list));
-    } catch (e) {
-      emit(state.copyWith(status: DisputesStatus.failure, error: e.toString()));
+    } on DioException catch (e) {
+      emit(
+        state.copyWith(
+          status: DisputesStatus.failure,
+          error: resolveApiErrorMessage(e),
+        ),
+      );
     }
   }
 
@@ -39,8 +46,13 @@ class DisputesCubit extends Cubit<DisputesState> {
       final newList = List<DisputeEntity>.from(state.disputes)
         ..insert(0, dispute);
       emit(state.copyWith(status: DisputesStatus.success, disputes: newList));
-    } catch (e) {
-      emit(state.copyWith(status: DisputesStatus.failure, error: e.toString()));
+    } on DioException catch (e) {
+      emit(
+        state.copyWith(
+          status: DisputesStatus.failure,
+          error: resolveApiErrorMessage(e),
+        ),
+      );
     }
   }
 }

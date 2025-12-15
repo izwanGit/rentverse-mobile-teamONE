@@ -9,6 +9,7 @@ import 'package:rentverse/features/auth/presentation/cubit/profile/cubit.dart';
 import 'package:rentverse/features/auth/presentation/cubit/profile/state.dart';
 import 'package:rentverse/features/auth/presentation/pages/trust_index_page.dart';
 import 'package:rentverse/features/wallet/presentation/pages/my_wallet.dart';
+import 'package:rentverse/features/disputes/presentation/pages/my_disputes_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -97,10 +98,18 @@ class _ProfileView extends StatelessWidget {
                             );
                           },
                         ),
-                        const _ProfileMenuItem(
-                          icon: Icons.location_on_outlined,
-                          label: 'Address',
+                        _ProfileMenuItem(
+                          icon: Icons.report,
+                          label: 'Disputes',
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const MyDisputesPage(),
+                              ),
+                            );
+                          },
                         ),
+
                         _ProfileMenuItem(
                           icon: Icons.wallet,
                           label: 'My Wallet',

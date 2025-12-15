@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:rentverse/core/network/dio_client.dart';
+import 'package:rentverse/core/utils/error_utils.dart';
 import '../models/dispute_model.dart';
 
 abstract class DisputesApiService {
@@ -25,9 +27,9 @@ class DisputesApiServiceImpl implements DisputesApiService {
       final items = (data['data'] as List<dynamic>)
           .cast<Map<String, dynamic>>();
       return items.map((e) => DisputeModel.fromJson(e)).toList();
-    } catch (e) {
+    } on DioException catch (e) {
       _logger.e('Failed GET /disputes', error: e);
-      rethrow;
+      throw Exception(resolveApiErrorMessage(e));
     }
   }
 
@@ -40,9 +42,9 @@ class DisputesApiServiceImpl implements DisputesApiService {
       final resp = await _dio.post('/bookings/$bookingId/dispute', data: body);
       _logger.i('POST /bookings/$bookingId/dispute -> ${resp.data}');
       return DisputeModel.fromJson(resp.data['data'] as Map<String, dynamic>);
-    } catch (e) {
+    } on DioException catch (e) {
       _logger.e('Failed POST dispute', error: e);
-      rethrow;
+      throw Exception(resolveApiErrorMessage(e));
     }
   }
 }
