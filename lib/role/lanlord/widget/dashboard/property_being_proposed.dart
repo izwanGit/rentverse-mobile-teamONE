@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:rentverse/role/lanlord/widget/my_property/property_components.dart';
 class PropertyBeingProposed extends StatelessWidget {
   const PropertyBeingProposed({super.key, required this.items});
 
@@ -50,54 +50,11 @@ class _PropertyCard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: item.imageUrl == null || item.imageUrl!.isEmpty
-                ? Container(
-                    width: 110,
-                    height: 80,
-                    color: Colors.grey.shade100,
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(Icons.image_not_supported, color: Colors.grey),
-                          SizedBox(height: 4),
-                          Text(
-                            'Gambar belum tersedia',
-                            style: TextStyle(color: Colors.grey, fontSize: 11),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                : Image.network(
-                    item.imageUrl!,
-                    width: 110,
-                    height: 80,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: 110,
-                      height: 80,
-                      color: Colors.grey.shade100,
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(Icons.image_not_supported, color: Colors.grey),
-                            SizedBox(height: 4),
-                            Text(
-                              'Gambar belum tersedia',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 11,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+          PropertyImage(
+            imageUrl: item.imageUrl,
+            title: item.title,
+            width: 110,
+            height: 80,
           ),
           const SizedBox(width: 12),
           Expanded(

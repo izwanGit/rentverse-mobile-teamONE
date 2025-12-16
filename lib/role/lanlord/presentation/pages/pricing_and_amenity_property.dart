@@ -224,7 +224,7 @@ class _PricingAndAmenityPropertyPageState
                   controller: _priceController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    hintText: 'e.g. 5.000.000',
+                    hintText: '',
                     prefixIcon: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [

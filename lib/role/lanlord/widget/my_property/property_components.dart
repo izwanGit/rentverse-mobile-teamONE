@@ -176,10 +176,18 @@ class PropertyCard extends StatelessWidget {
 }
 
 class PropertyImage extends StatelessWidget {
-  const PropertyImage({super.key, required this.imageUrl, required this.title});
+  const PropertyImage({
+    super.key,
+    required this.imageUrl,
+    required this.title,
+    this.width = 110,
+    this.height = 80,
+  });
 
   final String? imageUrl;
   final String title;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -189,26 +197,30 @@ class PropertyImage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Image.network(
           src ?? imageUrl!,
-          width: 110,
-          height: 80,
+          width: width,
+          height: height,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => const _PlaceholderBox(),
+          errorBuilder: (_, __, ___) =>
+              _PlaceholderBox(width: width, height: height),
         ),
       );
     }
 
-    return const _PlaceholderBox();
+    return _PlaceholderBox(width: width, height: height);
   }
 }
 
 class _PlaceholderBox extends StatelessWidget {
-  const _PlaceholderBox();
+  const _PlaceholderBox({this.width, this.height});
+
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 110,
-      height: 80,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
         color: const Color(0xFFF5F5F5),
         borderRadius: BorderRadius.circular(12),
@@ -223,6 +235,7 @@ class _PlaceholderBox extends StatelessWidget {
     );
   }
 }
+
 
 class StatusPill extends StatelessWidget {
   const StatusPill({super.key, required this.isVerified});

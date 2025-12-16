@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:rentverse/role/lanlord/widget/my_property/property_components.dart';
 class RentedProperty extends StatelessWidget {
   const RentedProperty({super.key, required this.items});
 
@@ -106,63 +106,11 @@ class _RentedCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: (item.imageUrl == null || item.imageUrl!.isEmpty)
-                    ? Container(
-                        width: 120,
-                        height: 90,
-                        color: Colors.grey.shade100,
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: const [
-                              Icon(
-                                Icons.image_not_supported,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                'Gambar belum tersedia',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : Image.network(
-                        item.imageUrl!,
-                        width: 120,
-                        height: 90,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          width: 120,
-                          height: 90,
-                          color: Colors.grey.shade100,
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Icon(
-                                  Icons.image_not_supported,
-                                  color: Colors.grey,
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'Gambar belum tersedia',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+              PropertyImage(
+                imageUrl: item.imageUrl,
+                title: item.title,
+                width: 120,
+                height: 90,
               ),
               const SizedBox(width: 12),
               Expanded(
