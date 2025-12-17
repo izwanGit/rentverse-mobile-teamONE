@@ -44,6 +44,7 @@ import 'package:rentverse/features/notification/data/source/notification_api_ser
 import 'package:rentverse/features/notification/domain/repository/notification_repository.dart';
 import 'package:rentverse/features/notification/domain/usecase/get_notifications_usecase.dart';
 import 'package:rentverse/features/notification/domain/usecase/mark_notification_read_usecase.dart';
+import 'package:rentverse/features/notification/domain/usecase/mark_all_notifications_read_usecase.dart';
 import 'package:rentverse/features/rental/data/repository/rental_repository_impl.dart';
 import 'package:rentverse/features/rental/data/source/rental_api_service.dart';
 import 'package:rentverse/features/rental/domain/repository/rental_repository.dart';
@@ -109,6 +110,9 @@ Future<void> setupServiceLocator() async {
   );
   sl.registerLazySingleton(
     () => MarkNotificationReadUseCase(sl<NotificationRepository>()),
+  );
+  sl.registerLazySingleton(
+    () => MarkAllNotificationsReadUseCase(sl<NotificationRepository>()),
   );
   sl.registerLazySingleton<ChatSocketService>(
     () => ChatSocketService(sl<Logger>(), sl()),

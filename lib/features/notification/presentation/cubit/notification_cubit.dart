@@ -1,14 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rentverse/features/notification/domain/usecase/get_notifications_usecase.dart';
 import 'package:rentverse/features/notification/domain/usecase/mark_notification_read_usecase.dart';
+import 'package:rentverse/features/notification/domain/usecase/get_notifications_usecase.dart';
+import 'package:rentverse/features/notification/domain/usecase/mark_notification_read_usecase.dart';
+import 'package:rentverse/features/notification/domain/usecase/mark_all_notifications_read_usecase.dart';
 import 'package:rentverse/features/notification/presentation/cubit/notification_state.dart';
 
 class NotificationCubit extends Cubit<NotificationState> {
-  NotificationCubit(this._getNotifications, this._markNotificationRead)
-    : super(const NotificationState());
+  NotificationCubit(
+    this._getNotifications,
+    this._markNotificationRead,
+    this._markAllNotificationsRead,
+  ) : super(const NotificationState());
 
   final GetNotificationsUseCase _getNotifications;
   final MarkNotificationReadUseCase _markNotificationRead;
+  final MarkAllNotificationsReadUseCase _markAllNotificationsRead;
 
   Future<void> load({int limit = 20}) async {
     emit(state.copyWith(isLoading: true, error: null));
@@ -73,6 +80,18 @@ class NotificationCubit extends Cubit<NotificationState> {
           error: e.toString(),
         ),
       );
+    }
+  }
+
+  Future<void> markAllRead() async {
+    if (state.isLoading) return;
+    emit(state.copyWith(isLoading: true, error: null));
+    try {
+      await _markAllNotificationsRead();
+      final updated = state.items.map((item) => item.copyWith(isRead: true)).toList();
+      emit(state.copyWith(isLoading: false, items: updated));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, error: e.toString()));
     }
   }
 }

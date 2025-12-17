@@ -4,6 +4,7 @@ import 'package:rentverse/features/notification/data/models/notification_model.d
 abstract class NotificationApiService {
   Future<NotificationListModel> getNotifications({int limit, String? cursor});
   Future<void> markAsRead(String id);
+  Future<void> markAllAsRead();
 }
 
 class NotificationApiServiceImpl implements NotificationApiService {
@@ -28,5 +29,10 @@ class NotificationApiServiceImpl implements NotificationApiService {
   @override
   Future<void> markAsRead(String id) async {
     await _client.patch('/notifications/$id/read');
+  }
+
+  @override
+  Future<void> markAllAsRead() async {
+    await _client.patch('/notifications/read-all');
   }
 }

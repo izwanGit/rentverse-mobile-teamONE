@@ -21,4 +21,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
 
   @override
   Future<void> markAsRead(String id) => _apiService.markAsRead(id);
+
+  @override
+  Future<void> markAllAsRead() => _apiService.markAllAsRead();
 }
