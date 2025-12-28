@@ -1,6 +1,7 @@
-
+//lib/features/auth/data/source/auth_api_service.dart
 
 import 'dart:developer' as developer;
+import 'dart:ffi';
 
 import 'package:rentverse/features/auth/data/models/request/login_request_model.dart';
 import 'package:rentverse/features/auth/data/models/request/register_request_model.dart';
@@ -10,7 +11,6 @@ import 'package:rentverse/features/auth/data/models/response/user_model.dart';
 
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/network/response/base_response_model.dart';
-
 
 abstract class AuthApiService {
   Future<BaseResponseModel<LoginResponseModel>> login(LoginRequestModel body);
@@ -31,7 +31,6 @@ abstract class AuthApiService {
     Map<String, dynamic> body,
   );
 }
-
 
 class AuthApiServiceImpl implements AuthApiService {
   final DioClient _dioClient;
@@ -83,7 +82,6 @@ class AuthApiServiceImpl implements AuthApiService {
     try {
       final response = await _dioClient.get('/auth/me');
 
-
       developer.log(
         'GET /auth/me raw response: ${response.data}',
         name: 'AuthApiService',
@@ -121,11 +119,11 @@ class AuthApiServiceImpl implements AuthApiService {
     Map<String, dynamic> body,
   ) async {
     try {
-      final response = await _dioClient.post('/auth/otp/send', data: body);
+      final response = await _dioClient.post('/auth/otp/sent', data: body);
 
       return BaseResponseModel.fromJson(
         response.data,
-        (json) => json as Map<String, dynamic>,
+        (json) => json as Map<String, Int>,
       );
     } catch (e) {
       rethrow;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:dio/dio.dart';
 
 import 'package:rentverse/core/services/service_locator.dart';
 import 'package:rentverse/core/utils/error_utils.dart';
@@ -26,7 +27,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _isLoading = false;
-  bool _isSending = false;
+  bool _isSending = true;
 
   bool get _isEmail => widget.channel.toUpperCase() == 'EMAIL';
 
@@ -75,8 +76,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final msg =
+            e is DioException ? resolveApiErrorMessage(e) : e.toString();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to send OTP: $e')),
+          SnackBar(content: Text('Failed to send OTP: $msg')),
         );
       }
     } finally {
@@ -109,8 +112,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           final updated = result.data == true;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                  updated ? 'Verification successful' : 'OTP verified'),
+              content:
+                  Text(updated ? 'Verification successful' : 'OTP verified'),
             ),
           );
           Navigator.of(context).pop(true);
@@ -168,8 +171,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 40),
-
-
               if (_isEmail) ...[
                 const Text(
                   'Email Verification',
@@ -180,17 +181,16 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   ),
                 ),
                 const SizedBox(height: 30),
-
-
                 Container(
                   padding: const EdgeInsets.all(20),
-                  child: Icon(LucideIcons.mail,
+                  child: Icon(
+                    LucideIcons.mail,
                     size: 80,
                     color: Colors.redAccent,
                   ),
                 ),
               ] else ...[
-                 const Text(
+                const Text(
                   'Phone Number Verification',
                   style: TextStyle(
                     fontSize: 16,
@@ -199,15 +199,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                Icon(LucideIcons.phone,
+                Icon(
+                  LucideIcons.phone,
                   size: 80,
                   color: Color(0xFF1E232C),
                 ),
               ],
-
               const SizedBox(height: 30),
-
-
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
@@ -230,22 +228,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       ),
                     ),
                     TextSpan(
-                      text: _isEmail
-                          ? ''
-                          : ', please check your SMS.',
+                      text: _isEmail ? '' : ', please check your SMS.',
                     ),
                   ],
                 ),
               ),
-
               const SizedBox(height: 32),
-
-
               _buildPinCodeInput(),
-
               const SizedBox(height: 20),
-
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -269,10 +259,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   ),
                 ],
               ),
-
               const Spacer(),
-
-
               SizedBox(
                 width: double.infinity,
                 height: 56,
@@ -316,7 +303,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     return Stack(
       alignment: Alignment.center,
       children: [
-
         SizedBox(
           height: 50,
           child: Opacity(
@@ -336,7 +322,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             ),
           ),
         ),
-
         GestureDetector(
           onTap: () {
             _focusNode.requestFocus();

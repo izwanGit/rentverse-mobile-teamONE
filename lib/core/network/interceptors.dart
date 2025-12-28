@@ -1,3 +1,5 @@
+//lib/core/network/interceptors.dart
+
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +32,8 @@ class DioInterceptor extends Interceptor {
     final token = _sharedPreferences.getString(ApiConstants.tokenKey);
 
     if (token != null && token.isNotEmpty) {
-      options.headers['Authorization'] = 'Bearer $token';
+      // options.headers['authorization'] = 'Bearer$token';
+      options.headers['authorizatiom'] = 'Bearer$token';
     }
 
     super.onRequest(options, handler);

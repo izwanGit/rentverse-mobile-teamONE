@@ -11,6 +11,8 @@ import 'package:rentverse/features/auth/domain/usecase/send_otp_usecase.dart';
 import 'package:rentverse/core/resources/data_state.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import 'package:rentverse/core/utils/error_utils.dart';
+
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
 
@@ -51,7 +53,9 @@ class EditProfileScreen extends StatelessWidget {
                         children: [
                           Text(
                             'Full Name',
-                            style: Theme.of(context).textTheme.bodyMedium
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
                                 ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 8),
@@ -59,14 +63,17 @@ class EditProfileScreen extends StatelessWidget {
                             hintText: 'Full Name',
                             initialValue: state.nameValue,
                             onChanged: cubit.setName,
-                            prefixIcon: Icon(LucideIcons.user,
+                            prefixIcon: Icon(
+                              LucideIcons.user,
                               color: Colors.grey,
                             ),
                           ),
                           const SizedBox(height: 16),
                           Text(
                             'Email',
-                            style: Theme.of(context).textTheme.bodyMedium
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
                                 ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 8),
@@ -74,7 +81,8 @@ class EditProfileScreen extends StatelessWidget {
                             hintText: 'Email',
                             initialValue: state.emailValue,
                             onChanged: cubit.setEmail,
-                            prefixIcon: Icon(LucideIcons.mail,
+                            prefixIcon: Icon(
+                              LucideIcons.mail,
                               color: Colors.grey,
                             ),
                             suffixIcon: TextButton(
@@ -83,7 +91,6 @@ class EditProfileScreen extends StatelessWidget {
                                   : () async {
                                       final target = state.emailValue;
                                       if (target.isEmpty) return;
-
 
                                       final sendUsecase = sl<SendOtpUseCase>();
                                       final params = SendOtpParams(
@@ -94,31 +101,29 @@ class EditProfileScreen extends StatelessWidget {
                                         param: params,
                                       );
                                       if (res is DataSuccess<bool>) {
-                                        final verified =
-                                            await Navigator.of(
-                                              context,
-                                            ).push<bool>(
-                                              MaterialPageRoute(
-                                                builder: (_) =>
-                                                    OtpVerificationScreen(
-                                                      target: target,
-                                                      channel: 'EMAIL',
-                                                    ),
-                                              ),
-                                            );
+                                        final verified = await Navigator.of(
+                                          context,
+                                        ).push<bool>(
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                OtpVerificationScreen(
+                                              target: target,
+                                              channel: 'EMAIL',
+                                            ),
+                                          ),
+                                        );
 
                                         if (verified == true) {
-
                                           cubit.loadProfile();
                                         }
                                       } else if (res is DataFailed) {
+                                        final msg =
+                                            resolveApiErrorMessage(res.error);
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
                                           SnackBar(
-                                            content: Text(
-                                              'Failed to send OTP: ${res.error}',
-                                            ),
+                                            content: Text(msg),
                                           ),
                                         );
                                       }
@@ -160,7 +165,9 @@ class EditProfileScreen extends StatelessWidget {
                           const SizedBox(height: 20),
                           Text(
                             'Phone Number',
-                            style: Theme.of(context).textTheme.bodyMedium
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
                                 ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 8),
@@ -169,7 +176,8 @@ class EditProfileScreen extends StatelessWidget {
                             initialValue: state.phoneValue,
                             keyboardType: TextInputType.phone,
                             onChanged: cubit.setPhone,
-                            prefixIcon: Icon(LucideIcons.phone,
+                            prefixIcon: Icon(
+                              LucideIcons.phone,
                               color: Colors.grey,
                             ),
                             suffixIcon: TextButton(
@@ -186,25 +194,24 @@ class EditProfileScreen extends StatelessWidget {
                                   param: params,
                                 );
                                 if (res is DataSuccess<bool>) {
-                                  final verified = await Navigator.of(context)
-                                      .push<bool>(
-                                        MaterialPageRoute(
-                                          builder: (_) => OtpVerificationScreen(
-                                            target: target,
-                                            channel: 'WHATSAPP',
-                                          ),
-                                        ),
-                                      );
+                                  final verified =
+                                      await Navigator.of(context).push<bool>(
+                                    MaterialPageRoute(
+                                      builder: (_) => OtpVerificationScreen(
+                                        target: target,
+                                        channel: 'WHATSAPP',
+                                      ),
+                                    ),
+                                  );
 
                                   if (verified == true) {
                                     cubit.loadProfile();
                                   }
                                 } else if (res is DataFailed) {
+                                  final msg = resolveApiErrorMessage(res.error);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                        'Failed to send OTP: ${res.error}',
-                                      ),
+                                      content: Text(msg),
                                     ),
                                   );
                                 }
@@ -223,27 +230,27 @@ class EditProfileScreen extends StatelessWidget {
                           const SizedBox(height: 6),
                           hasPhone
                               ? state.isPhoneVerified
-                                    ? Row(
-                                        children: [
-                                          const GradientCheck(),
-                                          const SizedBox(width: 6),
-                                          const Text(
-                                            'Phone number verified',
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                                  ? Row(
+                                      children: [
+                                        const GradientCheck(),
+                                        const SizedBox(width: 6),
+                                        const Text(
+                                          'Phone number verified',
+                                          style: TextStyle(
+                                            color: Colors.black87,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
                                           ),
-                                        ],
-                                      )
-                                    : const Text(
-                                        'Phone number not verified',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 12,
                                         ),
-                                      )
+                                      ],
+                                    )
+                                  : const Text(
+                                      'Phone number not verified',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 12,
+                                      ),
+                                    )
                               : const Text(
                                   'No phone number',
                                   style: TextStyle(
@@ -254,7 +261,9 @@ class EditProfileScreen extends StatelessWidget {
                           const SizedBox(height: 20),
                           Text(
                             'ID Card',
-                            style: Theme.of(context).textTheme.bodyMedium
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
                                 ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 8),
@@ -297,7 +306,8 @@ class EditProfileScreen extends StatelessWidget {
                             CustomTextField(
                               hintText: 'ID',
                               readOnly: true,
-                              prefixIcon: Icon(LucideIcons.badge,
+                              prefixIcon: Icon(
+                                LucideIcons.badge,
                                 color: Colors.grey,
                               ),
                               suffixIcon: TextButton(
