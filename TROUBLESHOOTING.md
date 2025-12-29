@@ -1,4 +1,4 @@
-# TROUBLESHOOTING: Mobile SecOps Challenge (A++ Final Submission)
+# TROUBLESHOOTING: Mobile SecOps Challenge Report
 
 **Development Team – TeamOne**
 - Muhammad Izwan bin Ahmad
