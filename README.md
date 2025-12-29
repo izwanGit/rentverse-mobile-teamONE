@@ -8,7 +8,7 @@
 - Ahmad Azfar Hakimi bin Mohammad Fauzy
 - Afiq Danial bin Mohd Asrinnihar
 
-### 🛡️ [View Full Troubleshooting & Security Audit Report](TROUBLESHOOTING.md)
+# 🛡️ [View Full Troubleshooting & Security Audit Report](TROUBLESHOOTING.md)
 
 ---
 
