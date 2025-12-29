@@ -121,7 +121,7 @@ class AuthApiServiceImpl implements AuthApiService {
 
       return BaseResponseModel.fromJson(
         response.data,
-        (json) => json as Map<String, int>,
+        (json) => json as Map<String, dynamic>,
       );
     } catch (e) {
       rethrow;
@@ -137,7 +137,7 @@ class AuthApiServiceImpl implements AuthApiService {
 
       return BaseResponseModel.fromJson(
         response.data,
-        (json) => json as Map<String, int>,
+        (json) => json as Map<String, dynamic>,
       );
     } catch (e) {
       rethrow;

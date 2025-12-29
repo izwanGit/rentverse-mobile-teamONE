@@ -14,6 +14,7 @@ The following table maps observed symptoms to the confirmed root causes and the 
 | **Instant Logout** | `Local Storage` | Saved token corrupted with leading space | Removed space injection in `AuthLocalDataSource` |
 | **Session Loss on Restart**| `Local Storage` | Inconsistent storage keys (`TOKEN_KEY` vs literal) | Standardized key management |
 | **OTP Verification Fail** | `Auth API` | Incorrect API paths (`/verifi` & `/sent`) | Corrected endpoint paths in `AuthApiService` |
+| **Verification Stuck** | `Auth API` | Malformed type casting (`Map<String, int>`) | Generalized casting to `Map<String, dynamic>` |
 | **Token Refresh loop** | `Repository` | Redundant data mapping (Nested `data['data']`) | Fixed response model deserialization |
 
 ---
@@ -61,6 +62,12 @@ In `lib/features/auth/data/source/auth_api_service.dart`:
 In `lib/features/auth/data/repository/auth_repository_impl.dart`:
 - **Bug**: Attempting to access `data['data']` on an already-deserialized object.
 - **Analysis**: This caused a `TypeError` in Dart, which was caught and returned as a generic `DataFailed`, leading the UI to believe the session was unrecoverable.
+
+### Root Cause 4: Strict JSON Type Casting
+In `lib/features/auth/data/source/auth_api_service.dart`:
+- **Bug**: Hardcoded casting `(json) => json as Map<String, int>`.
+- **Analysis**: If the backend returns string values (e.g., UUIDs or tokens), the cast fails with a `TypeError`. Because the repository only caught `DioException`, this error bubbled up or silenced the navigation logic.
+- **Fix**: Changed all OTP return casts to `Map<String, dynamic>`.
 
 ---
 

@@ -173,6 +173,13 @@ class AuthRepositoryImpl implements AuthRepository {
       );
     } on DioException catch (e) {
       return DataFailed(e);
+    } catch (e) {
+      return DataFailed(
+        DioException(
+          requestOptions: RequestOptions(path: '/auth/otp/send'),
+          error: e.toString(),
+        ),
+      );
     }
   }
 
@@ -205,6 +212,13 @@ class AuthRepositoryImpl implements AuthRepository {
       );
     } on DioException catch (e) {
       return DataFailed(e);
+    } catch (e) {
+      return DataFailed(
+        DioException(
+          requestOptions: RequestOptions(path: '/auth/otp/verify'),
+          error: e.toString(),
+        ),
+      );
     }
   }
   @override
