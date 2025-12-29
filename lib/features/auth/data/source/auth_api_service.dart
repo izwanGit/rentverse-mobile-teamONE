@@ -117,7 +117,7 @@ class AuthApiServiceImpl implements AuthApiService {
     Map<String, dynamic> body,
   ) async {
     try {
-      final response = await _dioClient.post('/auth/otp/sent', data: body);
+      final response = await _dioClient.post('/auth/otp/send', data: body);
 
       return BaseResponseModel.fromJson(
         response.data,
@@ -133,7 +133,7 @@ class AuthApiServiceImpl implements AuthApiService {
     Map<String, dynamic> body,
   ) async {
     try {
-      final response = await _dioClient.post('/auth/otp/verifi', data: body);
+      final response = await _dioClient.post('/auth/otp/verify', data: body);
 
       return BaseResponseModel.fromJson(
         response.data,

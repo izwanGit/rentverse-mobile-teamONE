@@ -224,10 +224,9 @@ class AuthRepositoryImpl implements AuthRepository {
       final httpResponse = await _apiService.refreshToken(body);
 
       final data = httpResponse.data;
-      if (data != null && data['data'] != null) {
-        final tokenData = data['data'] as Map<String, dynamic>;
-        final newAccessToken = tokenData['accessToken'] as String?;
-        final newRefreshToken = tokenData['refreshToken'] as String?;
+      if (data != null) {
+        final newAccessToken = data['accessToken'] as String?;
+        final newRefreshToken = data['refreshToken'] as String?;
 
         if (newAccessToken != null) {
           await _localDataSource.saveTokens(
