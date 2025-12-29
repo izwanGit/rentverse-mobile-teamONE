@@ -1,5 +1,17 @@
 # RENTVERSE - Mobile Application
 
+---
+
+## 🏆 Mobile SecOps Challenge Submission
+**Development Team – TeamOne**
+- Muhammad Izwan bin Ahmad
+- Ahmad Azfar Hakimi bin Mohammad Fauzy
+- Afiq Danial bin Mohd Asrinnihar
+
+### 🛡️ [View Full Troubleshooting & Security Audit Report (A++)](TROUBLESHOOTING.md)
+
+---
+
 <img width="3028" height="1600" alt="Container (1)" src="https://github.com/user-attachments/assets/fd719c69-2b8f-4e98-8e36-963fc1bacb98" />
 
 

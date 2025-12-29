@@ -1,5 +1,10 @@
 # Challenge Key: Mobile SecOps Troubleshooting
 
+**Development Team – TeamOne**
+- Muhammad Izwan bin Ahmad
+- Ahmad Azfar Hakimi bin Mohammad Fauzy
+- Afiq Danial bin Mohd Asrinnihar
+
 This guide contains the solutions for the intentional bugs introduced in the Rentverse Mobile App for the troubleshooting session.
 
 ## 1. Authorization Header Bug

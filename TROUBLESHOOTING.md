@@ -1,5 +1,10 @@
 # TROUBLESHOOTING: Mobile SecOps Challenge (A++ Final Submission)
 
+**Development Team – TeamOne**
+- Muhammad Izwan bin Ahmad
+- Ahmad Azfar Hakimi bin Mohammad Fauzy
+- Afiq Danial bin Mohd Asrinnihar
+
 ## 1. Executive Summary
 The Rentverse Mobile application was plagued by critical runtime authentication failures. Following a comprehensive security audit, **five (5) primary root causes** were identified, ranging from trivial typos in secure headers to fundamental logic errors in local token persistence. By systematically resolving these on the client side, API connectivity was restored and session maintenance was hardened to production standards.
 
@@ -95,3 +100,10 @@ We created `/android/app/src/main/res/xml/network_security_config.xml` to:
 4.  **Network**: All traffic is verified TLS 1.3 via `rvapi.ilhamdean.cloud`.
 
 **Resolution Status**: ✅ **100% Resolved**
+
+### Visual Proof of Resolution
+Below are the screenshots captured from the fixed application running on the Android Emulator.
+
+| Home Screen | Account Profile | Edit Profile |
+| :---: | :---: | :---: |
+| ![Home](assets/home_page.png) | ![Account](assets/account_page.png) | ![Edit Profile](assets/edit_user_profile_page.png) |
